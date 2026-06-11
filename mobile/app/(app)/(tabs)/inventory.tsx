@@ -42,6 +42,48 @@ function InventoryCard({ item, onAdjust }: { item: any; onAdjust: (item: any) =>
   );
 }
 
+function AdjustModal({ item, onClose }: { item: any; onClose: () => void }) {
+  const qc = useQueryClient();
+  const [qty, setQty] = useState(String(item?.quantity ?? ''));
+  const [price, setPrice] = useState(String(item?.sellingPrice ?? ''));
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: () => inventoryService.update(item._id, {
+      quantity: parseFloat(qty),
+      sellingPrice: parseFloat(price),
+    }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['inventory'] });
+      Toast.show({ type: 'success', text1: 'Stock updated!' });
+      onClose();
+    },
+    onError: (e: any) => Toast.show({ type: 'error', text1: e.response?.data?.message || 'Failed' }),
+  });
+
+  if (!item) return null;
+  return (
+    <Modal visible animationType="slide" presentationStyle="formSheet">
+      <View style={styles.modal}>
+        <View style={styles.modalHeader}>
+          <Text style={styles.modalTitle}>Adjust: {item.name}</Text>
+          <TouchableOpacity onPress={onClose}><Text style={styles.modalClose}>✕</Text></TouchableOpacity>
+        </View>
+        <View style={styles.inputWrap}>
+          <Text style={styles.label}>Quantity</Text>
+          <TextInput style={styles.input} value={qty} onChangeText={setQty} keyboardType="numeric" />
+        </View>
+        <View style={styles.inputWrap}>
+          <Text style={styles.label}>Selling Price (₦)</Text>
+          <TextInput style={styles.input} value={price} onChangeText={setPrice} keyboardType="numeric" />
+        </View>
+        <TouchableOpacity style={styles.btn} onPress={() => mutate()} disabled={isPending}>
+          {isPending ? <ActivityIndicator color={Colors.white} /> : <Text style={styles.btnText}>Update Stock</Text>}
+        </TouchableOpacity>
+      </View>
+    </Modal>
+  );
+}
+
 function AddItemModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const qc = useQueryClient();
   const [form, setForm] = useState({
@@ -54,9 +96,9 @@ function AddItemModal({ visible, onClose }: { visible: boolean; onClose: () => v
     mutationFn: () => inventoryService.create({
       ...form,
       quantity: parseFloat(form.quantity),
-      costPrice: parseFloat(form.costPrice),
-      sellingPrice: parseFloat(form.sellingPrice),
-      lowStockThreshold: parseInt(form.lowStockThreshold),
+      costPrice: parseFloat(form.costPrice) || 0,
+      sellingPrice: parseFloat(form.sellingPrice) || 0,
+      lowStockThreshold: parseInt(form.lowStockThreshold) || 5,
     }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['inventory'] });
@@ -101,6 +143,7 @@ function AddItemModal({ visible, onClose }: { visible: boolean; onClose: () => v
 
 export default function InventoryScreen() {
   const [showAdd, setShowAdd] = useState(false);
+  const [adjustItem, setAdjustItem] = useState<any>(null);
   const [search, setSearch] = useState('');
 
   const { data, isLoading, refetch, isRefetching } = useQuery({
@@ -108,9 +151,9 @@ export default function InventoryScreen() {
     queryFn: () => inventoryService.list(),
   });
 
-  const items = (data?.data?.data?.items || []).filter((i: any) =>
-    i.name.toLowerCase().includes(search.toLowerCase())
-  );
+  // sendPaginated → { success, data: [], pagination }
+  const allItems: any[] = Array.isArray(data?.data?.data) ? data.data.data : [];
+  const items = allItems.filter((i) => i.name.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <View style={styles.container}>
@@ -135,7 +178,7 @@ export default function InventoryScreen() {
         <FlatList
           data={items}
           keyExtractor={(i) => i._id}
-          renderItem={({ item }) => <InventoryCard item={item} onAdjust={() => {}} />}
+          renderItem={({ item }) => <InventoryCard item={item} onAdjust={setAdjustItem} />}
           contentContainerStyle={{ padding: 16, gap: 10, paddingBottom: 100 }}
           ListEmptyComponent={
             <View style={styles.empty}>
@@ -148,6 +191,7 @@ export default function InventoryScreen() {
       )}
 
       <AddItemModal visible={showAdd} onClose={() => setShowAdd(false)} />
+      {adjustItem && <AdjustModal item={adjustItem} onClose={() => setAdjustItem(null)} />}
     </View>
   );
 }

@@ -27,4 +27,7 @@ export const authService = {
     api.post('/auth/logout', { refreshToken }),
 
   getMe: () => api.get('/auth/me'),
+
+  updateFCMToken: (fcmToken: string) =>
+    api.put('/auth/fcm-token', { fcmToken }),
 };

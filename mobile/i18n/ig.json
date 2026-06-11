@@ -1,0 +1,88 @@
+{
+  "common": {
+    "save": "Chekwaa",
+    "cancel": "Kagbuo",
+    "delete": "Hichapụ",
+    "edit": "Dezie",
+    "back": "Laghachi",
+    "loading": "Na-ebugo...",
+    "error": "Ihe mere ezighi ezi",
+    "success": "Ihe nke ọma",
+    "seeAll": "Hụ Niile",
+    "noData": "Enweghị data"
+  },
+  "auth": {
+    "welcome": "Nnọọ Laghachi",
+    "register": "Mepụta Akaụntụ",
+    "login": "Banye",
+    "logout": "Pụọ",
+    "phone": "Nọmba Ekwentị",
+    "password": "Okwu Nzuzo",
+    "firstName": "Aha Mbu",
+    "lastName": "Aha Ikpeazụ",
+    "businessName": "Aha Azụmaahịa",
+    "otpSent": "Ezigara gị koodu na ekwentị",
+    "verify": "Nwee nnọchiteanya"
+  },
+  "dashboard": {
+    "greeting": "Ụtụtụ ọma",
+    "revenue": "Ego banyere",
+    "profit": "Uru",
+    "sales": "Ire ahịa",
+    "itemsSold": "Ngwongwo e rere",
+    "healthScore": "Akara Ahụike Azụmaahịa",
+    "creditScore": "Akara Kredit",
+    "quickActions": "Ọrụ Ngwa Ngwa",
+    "recentTransactions": "Azụmahịa Nso Nso"
+  },
+  "voice": {
+    "tapToStart": "Pịa ịmalite",
+    "tapToStop": "Pịa ịkwụsị",
+    "listening": "Na-anụ olu...",
+    "processing": "Na-arụ ọrụ olu gị...",
+    "instruction": "Pịa makirọfọn, kọọ azụmahịa gị",
+    "example": "\"Agbaghara m akpa atọ nke osikapa maka naira 45,000\"",
+    "recorded": "Azụmahịa edebere!",
+    "savedOffline": "Echekwara Offline"
+  },
+  "transactions": {
+    "title": "Azụmahịa",
+    "add": "Tinye Azụmahịa",
+    "type": "Ụdị",
+    "amount": "Ọnụ ego",
+    "product": "Ngwongwo",
+    "customer": "Onye ahịa",
+    "date": "Ụbọchị"
+  },
+  "inventory": {
+    "title": "Ihe ndị dị n'ọnọdụ",
+    "add": "Tinye Ihe",
+    "lowStock": "Ngwongwo dị ala",
+    "quantity": "Ọnụọgụ",
+    "costPrice": "Ọnụ ahịa ịzụ",
+    "sellingPrice": "Ọnụ ahịa ire"
+  },
+  "debt": {
+    "title": "Akwụkwọ Ọgbọ",
+    "add": "Deere Ọgbọ",
+    "balance": "Ego fọdụrụ",
+    "paid": "Akwụọla",
+    "due": "Ụbọchị Ịkwụ Ụgwọ",
+    "recordPayment": "Deere Ịkwụ Ụgwọ",
+    "settled": "Akwụọla",
+    "pending": "Na-atụ ọnọ",
+    "overdue": "Gafere ụbọchị"
+  },
+  "scores": {
+    "health": "Akara Ahụike Azụmahịa",
+    "credit": "Akara Kredit",
+    "strengths": "Ike",
+    "weaknesses": "Ebe a ga-eme ka ọ dịkwuo mma",
+    "recommendations": "Ndụmọdụ",
+    "excellent": "Dị mma nke ukwuu",
+    "good": "Dị mma",
+    "fair": "Ọ dị ngwọta",
+    "needsWork": "Chọọ ọrụ",
+    "critical": "Ihe egwu"
+  }
+}

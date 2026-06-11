@@ -5,6 +5,14 @@ import Debt from '../models/Debt';
 import { logger } from '../utils/logger';
 import mongoose from 'mongoose';
 
+export const runCreditScoreForUser = async (userId: string) => {
+  const user = await User.findById(userId).select('_id kycStatus createdAt');
+  if (!user) throw new Error('User not found');
+  const score = await computeCreditScore(user as any);
+  const saved = await CreditScore.create({ userId, ...score, calculatedAt: new Date() });
+  return saved;
+};
+
 export const runCreditScoreJob = async () => {
   const users = await User.find({ isActive: true }).select('_id kycStatus createdAt');
   let processed = 0;

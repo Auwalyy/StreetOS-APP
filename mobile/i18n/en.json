@@ -1,0 +1,88 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "success": "Success",
+    "seeAll": "See All",
+    "noData": "No data found"
+  },
+  "auth": {
+    "welcome": "Welcome Back",
+    "register": "Create Account",
+    "login": "Sign In",
+    "logout": "Sign Out",
+    "phone": "Phone Number",
+    "password": "Password",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "businessName": "Business Name",
+    "otpSent": "Code sent to your phone",
+    "verify": "Verify"
+  },
+  "dashboard": {
+    "greeting": "Good morning",
+    "revenue": "Revenue",
+    "profit": "Profit",
+    "sales": "Sales",
+    "itemsSold": "Items Sold",
+    "healthScore": "Health Score",
+    "creditScore": "Credit Score",
+    "quickActions": "Quick Actions",
+    "recentTransactions": "Recent Transactions"
+  },
+  "voice": {
+    "tapToStart": "Tap to start",
+    "tapToStop": "Tap to stop",
+    "listening": "Listening... speak clearly",
+    "processing": "Processing your voice...",
+    "instruction": "Tap the mic and speak your transaction",
+    "example": "\"I sold 3 bags of rice for 45,000 naira\"",
+    "recorded": "Transaction Recorded!",
+    "savedOffline": "Saved Offline"
+  },
+  "transactions": {
+    "title": "Transactions",
+    "add": "Add Transaction",
+    "type": "Type",
+    "amount": "Amount",
+    "product": "Product",
+    "customer": "Customer",
+    "date": "Date"
+  },
+  "inventory": {
+    "title": "Inventory",
+    "add": "Add Item",
+    "lowStock": "Low Stock",
+    "quantity": "Quantity",
+    "costPrice": "Cost Price",
+    "sellingPrice": "Selling Price"
+  },
+  "debt": {
+    "title": "Debt Book",
+    "add": "Record Debt",
+    "balance": "Balance",
+    "paid": "Paid",
+    "due": "Due Date",
+    "recordPayment": "Record Payment",
+    "settled": "Settled",
+    "pending": "Pending",
+    "overdue": "Overdue"
+  },
+  "scores": {
+    "health": "Business Health Score",
+    "credit": "Credit Score",
+    "strengths": "Strengths",
+    "weaknesses": "Areas to Improve",
+    "recommendations": "Recommendations",
+    "excellent": "Excellent",
+    "good": "Good",
+    "fair": "Fair",
+    "needsWork": "Needs Work",
+    "critical": "Critical"
+  }
+}

@@ -57,17 +57,19 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="inventory"
         options={{
-          title: 'Inventory',
+          title: 'Stock',
           tabBarIcon: ({ focused }) => <TabIcon emoji="📦" focused={focused} />,
         }}
       />
       <Tabs.Screen
-        name="debt"
+        name="analytics"
         options={{
-          title: 'Debts',
-          tabBarIcon: ({ focused }) => <TabIcon emoji="📒" focused={focused} />,
+          title: 'Analytics',
+          tabBarIcon: ({ focused }) => <TabIcon emoji="📊" focused={focused} />,
         }}
       />
+      {/* debt tab accessible via quick actions, not in bottom nav to keep 5 items */}
+      <Tabs.Screen name="debt" options={{ href: null }} />
     </Tabs>
   );
 }

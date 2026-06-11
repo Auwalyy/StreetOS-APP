@@ -1,0 +1,88 @@
+{
+  "common": {
+    "save": "Fipamọ",
+    "cancel": "Fagilee",
+    "delete": "Paarẹ",
+    "edit": "Ṣatunkọ",
+    "back": "Padà",
+    "loading": "Ń gba...",
+    "error": "Nkan kan ṣẹlẹ",
+    "success": "Àṣeyọrí",
+    "seeAll": "Wo Gbogbo",
+    "noData": "Ko si data"
+  },
+  "auth": {
+    "welcome": "Ẹ káàbọ̀ padà",
+    "register": "Ṣẹda Àkọọ́lẹ̀",
+    "login": "Wọle",
+    "logout": "Jáde",
+    "phone": "Nọmba Foonu",
+    "password": "Ọrọ aṣínà",
+    "firstName": "Orúkọ àkọ́kọ́",
+    "lastName": "Orúkọ ẹbí",
+    "businessName": "Orúkọ Iṣòwò",
+    "otpSent": "A ti fi koodu ránṣẹ si foonu rẹ",
+    "verify": "Jẹrìísì"
+  },
+  "dashboard": {
+    "greeting": "Ẹ káàárọ̀",
+    "revenue": "Owó tó wọlé",
+    "profit": "Èrè",
+    "sales": "Tita",
+    "itemsSold": "Nǹkan tí a tà",
+    "healthScore": "Àmì Ìlera Iṣòwò",
+    "creditScore": "Àmì Kirẹditi",
+    "quickActions": "Ìgbésẹ̀ Kíákíá",
+    "recentTransactions": "Ìdúnàádúrà Àìpẹ́"
+  },
+  "voice": {
+    "tapToStart": "Tẹ lati bẹrẹ",
+    "tapToStop": "Tẹ lati dúró",
+    "listening": "Ń gbọ́...",
+    "processing": "Ń ṣe àtúpalẹ̀...",
+    "instruction": "Tẹ makirófònì, sọ ìdúnàádúrà rẹ",
+    "example": "\"Mo tà àwọn àpò mẹ́ta iresi fún 45,000 náírà\"",
+    "recorded": "Ìdúnàádúrà ti forí kọ!",
+    "savedOffline": "Ti fipamọ̀ Offline"
+  },
+  "transactions": {
+    "title": "Ìdúnàádúrà",
+    "add": "Fi Ìdúnàádúrà kún",
+    "type": "Irú",
+    "amount": "Iye owó",
+    "product": "Ẹrù",
+    "customer": "Oníbàárà",
+    "date": "Ọjọ́"
+  },
+  "inventory": {
+    "title": "Ìpèsè",
+    "add": "Fi nǹkan kún",
+    "lowStock": "Ẹrù ti fopin",
+    "quantity": "Ìye",
+    "costPrice": "Iye rírà",
+    "sellingPrice": "Iye títa"
+  },
+  "debt": {
+    "title": "Ìwé Gbèsè",
+    "add": "Kọ Gbèsè",
+    "balance": "Ìdúró gbèsè",
+    "paid": "Ti san",
+    "due": "Ọjọ́ Ìsanwó",
+    "recordPayment": "Kọ Ìsanwó",
+    "settled": "Ti san",
+    "pending": "Ń dúró",
+    "overdue": "Ti kọjá ọjọ́"
+  },
+  "scores": {
+    "health": "Àmì Ìlera Iṣòwò",
+    "credit": "Àmì Kirẹditi",
+    "strengths": "Ìlera",
+    "weaknesses": "Àwọn tó nílò ìtọ́kasí",
+    "recommendations": "Ìmọ̀ràn",
+    "excellent": "Ó tayọ",
+    "good": "Ó dára",
+    "fair": "Ó yẹ",
+    "needsWork": "Nílò iṣẹ́",
+    "critical": "Ó lewu"
+  }
+}

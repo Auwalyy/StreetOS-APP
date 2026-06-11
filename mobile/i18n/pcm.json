@@ -1,0 +1,88 @@
+{
+  "common": {
+    "save": "Save am",
+    "cancel": "Cancel",
+    "delete": "Delete am",
+    "edit": "Edit am",
+    "back": "Go back",
+    "loading": "E dey load...",
+    "error": "Sometin bad happen",
+    "success": "E don work",
+    "seeAll": "See all",
+    "noData": "Nothing dey here"
+  },
+  "auth": {
+    "welcome": "Welcome back!",
+    "register": "Create Account",
+    "login": "Enter",
+    "logout": "Comot",
+    "phone": "Phone Number",
+    "password": "Password",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "businessName": "Business Name",
+    "otpSent": "We send code go your phone",
+    "verify": "Verify"
+  },
+  "dashboard": {
+    "greeting": "Good morning",
+    "revenue": "Money wey enter",
+    "profit": "Profit",
+    "sales": "Sales",
+    "itemsSold": "Things wey you sell",
+    "healthScore": "Business Health",
+    "creditScore": "Credit Score",
+    "quickActions": "Quick Things",
+    "recentTransactions": "Recent Sales"
+  },
+  "voice": {
+    "tapToStart": "Press to start",
+    "tapToStop": "Press to stop",
+    "listening": "E dey listen...",
+    "processing": "E dey process your voice...",
+    "instruction": "Press mic, talk wetin you sell",
+    "example": "\"I sell 3 bags of rice for 45,000 naira\"",
+    "recorded": "Transaction don enter!",
+    "savedOffline": "E save for offline"
+  },
+  "transactions": {
+    "title": "Transactions",
+    "add": "Add Transaction",
+    "type": "Type",
+    "amount": "Money",
+    "product": "Item",
+    "customer": "Customer",
+    "date": "Date"
+  },
+  "inventory": {
+    "title": "Inventory",
+    "add": "Add Item",
+    "lowStock": "Stock don low",
+    "quantity": "How much remain",
+    "costPrice": "How you buy am",
+    "sellingPrice": "How you dey sell am"
+  },
+  "debt": {
+    "title": "Debt Book",
+    "add": "Write Debt",
+    "balance": "Wetin remain",
+    "paid": "Wey dem pay",
+    "due": "Date to pay",
+    "recordPayment": "Write payment",
+    "settled": "Don settle",
+    "pending": "Still dey owe",
+    "overdue": "Don pass date"
+  },
+  "scores": {
+    "health": "Business Health Score",
+    "credit": "Credit Score",
+    "strengths": "Wetin dey work",
+    "weaknesses": "Wetin need work",
+    "recommendations": "Advice",
+    "excellent": "E dey fire!",
+    "good": "E good",
+    "fair": "E so so",
+    "needsWork": "E need work",
+    "critical": "E bad bad"
+  }
+}

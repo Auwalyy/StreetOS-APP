@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { sendSuccess } from '../utils/response';
 import HealthScore from '../models/HealthScore';
 import CreditScore from '../models/CreditScore';
-import { calculateHealthScore, calculateCreditScore } from '../services/ai.service';
+import { runHealthScoreForUser, runCreditScoreForUser } from '../jobs/healthScore.job';
 
 export const getHealthScore = async (req: Request, res: Response) => {
   const score = await HealthScore.findOne({ userId: req.user!._id }).sort({ calculatedAt: -1 });
@@ -25,13 +25,10 @@ export const getCreditScoreHistory = async (req: Request, res: Response) => {
 };
 
 export const refreshScores = async (req: Request, res: Response) => {
+  const userId = String(req.user!._id);
   const [health, credit] = await Promise.all([
-    calculateHealthScore(String(req.user!._id)),
-    calculateCreditScore(String(req.user!._id)),
+    runHealthScoreForUser(userId),
+    runCreditScoreForUser(userId),
   ]);
-
-  if (health) await HealthScore.create({ userId: req.user!._id, ...health, calculatedAt: new Date() });
-  if (credit) await CreditScore.create({ userId: req.user!._id, ...credit, calculatedAt: new Date() });
-
   sendSuccess(res, { health, credit }, 'Scores refreshed');
 };

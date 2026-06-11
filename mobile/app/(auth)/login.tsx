@@ -4,6 +4,7 @@ import {
   KeyboardAvoidingView, Platform, ActivityIndicator,
 } from 'react-native';
 import { router } from 'expo-router';
+import * as Notifications from 'expo-notifications';
 import Toast from 'react-native-toast-message';
 import { authService } from '../../services/auth.service';
 import { useAuthStore } from '../../store/authStore';
@@ -25,6 +26,14 @@ export default function LoginScreen() {
     try {
       const { data } = await authService.login(phone, password);
       setAuth(data.data.user, data.data.accessToken, data.data.refreshToken);
+      // Register FCM token for push notifications
+      try {
+        const { status } = await Notifications.requestPermissionsAsync();
+        if (status === 'granted') {
+          const token = await Notifications.getExpoPushTokenAsync();
+          await authService.updateFCMToken(token.data);
+        }
+      } catch { /* non-critical */ }
       router.replace('/(app)/(tabs)/');
     } catch (e: any) {
       Toast.show({ type: 'error', text1: e.response?.data?.message || 'Login failed' });

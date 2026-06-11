@@ -28,6 +28,7 @@ export const analyticsService = {
   getProfitLoss: (from?: string, to?: string) => api.get('/analytics/profit-loss', { params: { from, to } }),
   getTopProducts: (limit?: number) => api.get('/analytics/top-products', { params: { limit } }),
   getRevenueTrends: () => api.get('/analytics/revenue-trends'),
+  getDebtSummary: () => api.get('/analytics/debt-summary'),
 };
 
 export const scoreService = {

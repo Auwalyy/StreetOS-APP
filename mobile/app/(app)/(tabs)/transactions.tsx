@@ -106,7 +106,8 @@ export default function TransactionsScreen() {
     queryFn: () => transactionService.list({ type: filter === 'all' ? undefined : filter, limit: 50 }),
   });
 
-  const transactions = data?.data?.data?.transactions || [];
+  // sendPaginated returns { success, data: [], pagination } — array is at .data.data
+  const transactions: any[] = Array.isArray(data?.data?.data) ? data.data.data : [];
 
   return (
     <View style={styles.container}>

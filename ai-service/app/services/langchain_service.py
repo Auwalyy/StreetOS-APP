@@ -1,6 +1,5 @@
+import google.generativeai as genai
 from langgraph.graph import StateGraph, END
-from langchain_openai import ChatOpenAI
-from langchain_core.messages import HumanMessage, SystemMessage
 from typing import TypedDict, Optional
 from app.config import settings
 from app.prompts.prompts import ADVISOR_SYSTEM_PROMPT
@@ -8,7 +7,7 @@ import structlog
 
 logger = structlog.get_logger()
 
-llm = ChatOpenAI(model="gpt-4o", api_key=settings.openai_api_key, temperature=0.7)
+genai.configure(api_key=settings.gemini_api_key)
 
 
 class AdvisorState(TypedDict):
@@ -22,17 +21,26 @@ class AdvisorState(TypedDict):
     response: Optional[str]
 
 
+def _get_gemini():
+    return genai.GenerativeModel(
+        model_name=settings.gemini_pro_model,
+        generation_config=genai.GenerationConfig(temperature=0.7, max_output_tokens=512),
+    )
+
+
 async def fetch_context_node(state: AdvisorState) -> AdvisorState:
-    """Fetch business context from MongoDB."""
-    # In production this queries MongoDB directly via motor
-    state["business_context"] = f"Recent revenue: ₦{state.get('recent_revenue', 0):,.0f}. " \
-                                  f"Overdue debts: {len(state.get('overdue_debts', []))}. " \
-                                  f"Low stock items: {len(state.get('low_stock_items', []))}."
+    low = len(state.get("low_stock_items") or [])
+    debts = len(state.get("overdue_debts") or [])
+    revenue = state.get("recent_revenue") or 0
+    state["business_context"] = (
+        f"Recent revenue: ₦{revenue:,.0f}. "
+        f"Overdue debts: {debts}. "
+        f"Low stock items: {low}."
+    )
     return state
 
 
 async def generate_response_node(state: AdvisorState) -> AdvisorState:
-    """Generate AI response using context."""
     lang_names = {"en": "English", "ha": "Hausa", "yo": "Yoruba", "ig": "Igbo", "pcm": "Nigerian Pidgin"}
     lang_name = lang_names.get(state["language"], "English")
 
@@ -41,13 +49,9 @@ async def generate_response_node(state: AdvisorState) -> AdvisorState:
         business_context=state["business_context"],
     )
 
-    messages = [
-        SystemMessage(content=system),
-        HumanMessage(content=state["message"]),
-    ]
-
-    response = await llm.ainvoke(messages)
-    state["response"] = response.content
+    model = _get_gemini()
+    response = model.generate_content(f"{system}\n\nUser: {state['message']}")
+    state["response"] = response.text.strip()
     return state
 
 
@@ -84,7 +88,8 @@ async def get_daily_briefing(user_id: str, language: str, context: dict) -> str:
     debts = len(context.get("overdue_debts", []))
     revenue = context.get("yesterday_revenue", 0)
 
-    message = f"Give me a morning briefing. Yesterday revenue: ₦{revenue:,.0f}. " \
-              f"Low stock items: {low}. Overdue debts: {debts}."
-
+    message = (
+        f"Give me a morning briefing. Yesterday revenue: ₦{revenue:,.0f}. "
+        f"Low stock items: {low}. Overdue debts: {debts}."
+    )
     return await get_advisor_response(user_id, message, language, context)

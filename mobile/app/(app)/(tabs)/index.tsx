@@ -19,14 +19,17 @@ function SummaryCard({ emoji, label, value, color }: { emoji: string; label: str
   );
 }
 
-function ScoreGauge({ score, label, color }: { score: number; label: string; color: string }) {
+function ScoreGauge({ score, max, label, color }: { score: number; max: number; label: string; color: string }) {
+  const display = max === 850 ? score : score;
   const band =
-    score >= 90 ? 'Excellent' : score >= 75 ? 'Good' : score >= 60 ? 'Fair' : score >= 40 ? 'Needs Work' : 'Critical';
+    max === 100
+      ? score >= 90 ? 'Excellent' : score >= 75 ? 'Good' : score >= 60 ? 'Fair' : score >= 40 ? 'Needs Work' : 'Critical'
+      : score >= 750 ? 'Excellent' : score >= 670 ? 'Good' : score >= 580 ? 'Fair' : 'Poor';
   return (
     <View style={styles.gaugeWrap}>
       <View style={[styles.gaugeCircle, { borderColor: color }]}>
-        <Text style={[styles.gaugeScore, { color }]}>{score}</Text>
-        <Text style={styles.gaugeMax}>/100</Text>
+        <Text style={[styles.gaugeScore, { color }]}>{display}</Text>
+        <Text style={styles.gaugeMax}>/{max}</Text>
       </View>
       <Text style={styles.gaugeLabel}>{label}</Text>
       <Text style={[styles.gaugeBand, { color }]}>{band}</Text>
@@ -38,7 +41,7 @@ export default function DashboardScreen() {
   const user = useAuthStore((s) => s.user);
   const pendingCount = useOfflineStore((s) => s.getPendingCount());
 
-  const { data: summary, refetch: refetchSummary, isRefetching } = useQuery({
+  const { data: summaryData, refetch: refetchSummary, isRefetching } = useQuery({
     queryKey: ['summary', 'daily'],
     queryFn: () => transactionService.getSummary('daily'),
   });
@@ -46,6 +49,11 @@ export default function DashboardScreen() {
   const { data: healthData } = useQuery({
     queryKey: ['health-score'],
     queryFn: () => scoreService.getHealth(),
+  });
+
+  const { data: creditData } = useQuery({
+    queryKey: ['credit-score'],
+    queryFn: () => scoreService.getCredit(),
   });
 
   const { data: briefingData } = useQuery({
@@ -58,10 +66,14 @@ export default function DashboardScreen() {
     queryFn: () => transactionService.list({ limit: 5 }),
   });
 
-  const s = summary?.data?.data || {};
+  // sendSuccess wraps in { success, message, data } — so .data.data is payload
+  const s = summaryData?.data?.data || {};
   const health = healthData?.data?.data;
-  const briefing = briefingData?.data?.data;
-  const recent = recentData?.data?.data?.transactions || [];
+  const credit = creditData?.data?.data;
+  // advisor briefing returns { briefing, language }
+  const briefingText = briefingData?.data?.data?.briefing || briefingData?.data?.data?.message;
+  // sendPaginated returns { success, data: [], pagination } — data is array directly at .data.data
+  const recent: any[] = Array.isArray(recentData?.data?.data) ? recentData.data.data : [];
 
   return (
     <ScrollView
@@ -85,19 +97,22 @@ export default function DashboardScreen() {
           <TouchableOpacity onPress={() => router.push('/(app)/notifications')} style={styles.notifBtn}>
             <Text style={{ fontSize: 22 }}>🔔</Text>
           </TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/(app)/profile')} style={styles.notifBtn}>
+            <Text style={{ fontSize: 22 }}>👤</Text>
+          </TouchableOpacity>
         </View>
       </View>
 
       {/* AI Briefing */}
-      {briefing?.message && (
+      {briefingText ? (
         <TouchableOpacity style={styles.briefingCard}>
           <Text style={styles.briefingEmoji}>🤖</Text>
           <View style={{ flex: 1 }}>
             <Text style={styles.briefingTitle}>AI Advisor</Text>
-            <Text style={styles.briefingText} numberOfLines={3}>{briefing.message}</Text>
+            <Text style={styles.briefingText} numberOfLines={3}>{briefingText}</Text>
           </View>
         </TouchableOpacity>
-      )}
+      ) : null}
 
       {/* Summary Cards */}
       <Text style={styles.sectionTitle}>Today's Summary</Text>
@@ -112,14 +127,10 @@ export default function DashboardScreen() {
       <Text style={styles.sectionTitle}>Business Scores</Text>
       <View style={styles.scoresRow}>
         <TouchableOpacity style={styles.scoreCard} onPress={() => router.push('/(app)/health-score')}>
-          <ScoreGauge score={health?.score || 0} label="Health Score" color={Colors.success} />
+          <ScoreGauge score={health?.score || 0} max={100} label="Health Score" color={Colors.success} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.scoreCard} onPress={() => router.push('/(app)/credit-score')}>
-          <ScoreGauge
-            score={health ? Math.round((health.score / 100) * 850) : 0}
-            label="Credit Score"
-            color={Colors.primary[400]}
-          />
+          <ScoreGauge score={credit?.score || 0} max={850} label="Credit Score" color={Colors.primary[400]} />
         </TouchableOpacity>
       </View>
 
@@ -128,9 +139,9 @@ export default function DashboardScreen() {
       <View style={styles.actionsGrid}>
         {[
           { emoji: '🎤', label: 'Voice Sale', route: '/(app)/voice' },
-          { emoji: '📒', label: 'Add Debt', route: '/(app)/(tabs)/debt' },
+          { emoji: '📒', label: 'Debt Book', route: '/(app)/(tabs)/debt' },
           { emoji: '📦', label: 'Inventory', route: '/(app)/(tabs)/inventory' },
-          { emoji: '📊', label: 'Analytics', route: '/(app)/(tabs)/transactions' },
+          { emoji: '📊', label: 'Analytics', route: '/(app)/(tabs)/analytics' },
           { emoji: '🪪', label: 'Passport', route: '/(app)/passport' },
           { emoji: '👥', label: 'Customers', route: '/(app)/customers/index' },
         ].map((a) => (
@@ -153,7 +164,7 @@ export default function DashboardScreen() {
           <Text style={styles.emptyText}>No transactions yet. Tap 🎤 to record your first sale!</Text>
         </View>
       ) : (
-        recent.map((t: any) => (
+        recent.slice(0, 5).map((t: any) => (
           <View key={t._id} style={styles.txItem}>
             <View style={styles.txLeft}>
               <Text style={styles.txEmoji}>{t.type === 'sale' ? '💰' : t.type === 'expense' ? '💸' : '📥'}</Text>
@@ -181,7 +192,7 @@ const styles = StyleSheet.create({
   headerActions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   syncBadge: { backgroundColor: Colors.warning, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
   syncText: { fontSize: Typography.fontSize.xs, fontWeight: Typography.fontWeight.bold, color: Colors.white },
-  notifBtn: { padding: 8 },
+  notifBtn: { padding: 4 },
   briefingCard: {
     flexDirection: 'row', backgroundColor: Colors.primary[100], borderRadius: 16,
     padding: 16, gap: 12, marginBottom: 16, alignItems: 'flex-start',
@@ -212,7 +223,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center', flexDirection: 'row',
   },
   gaugeScore: { fontSize: Typography.fontSize.xl, fontWeight: Typography.fontWeight.extrabold },
-  gaugeMax: { fontSize: Typography.fontSize.xs, color: Colors.gray[400], marginTop: 6 },
+  gaugeMax: { fontSize: 9, color: Colors.gray[400], marginTop: 6 },
   gaugeLabel: { fontSize: Typography.fontSize.sm, fontWeight: Typography.fontWeight.semibold, color: Colors.gray[700] },
   gaugeBand: { fontSize: Typography.fontSize.xs, fontWeight: Typography.fontWeight.bold },
   actionsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginBottom: 8 },

@@ -47,7 +47,8 @@ export default function NotificationsScreen() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['notifications'] }),
   });
 
-  const notifications = data?.data?.data?.notifications || [];
+  // sendPaginated → { success, data: [], pagination }
+  const notifications: any[] = Array.isArray(data?.data?.data) ? data.data.data : [];
   const unreadCount = notifications.filter((n: any) => !n.readAt).length;
 
   return (

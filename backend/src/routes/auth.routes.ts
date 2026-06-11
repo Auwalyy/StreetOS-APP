@@ -29,5 +29,7 @@ router.post('/resend-otp', authRateLimiter, validate(Joi.object({ phone: Joi.str
 router.post('/refresh-token', validate(Joi.object({ refreshToken: Joi.string().required() })), authController.refreshToken);
 router.post('/logout', authController.logout);
 router.get('/me', authenticate, authController.getMe);
+router.put('/fcm-token', authenticate, authController.updateFCMToken);
+router.put('/fcm-token', authenticate, authController.updateFCMToken);
 
 export default router;

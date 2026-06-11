@@ -54,10 +54,11 @@ export const useVoice = () => {
 
       const language = user?.language || 'en';
       const response = await transactionService.createVoice(uri, language);
-      const data = response.data?.data;
+      const payload = response.data?.data;
 
-      setTranscript(data?.transaction?.voiceTranscript || '');
-      setResult(data);
+      // Backend returns { transaction, confidence, inventoryUpdated }
+      setTranscript(payload?.transaction?.voiceTranscript || '');
+      setResult(payload);
       setState('success');
       await voiceService.deleteRecording(uri);
     } catch (err: unknown) {

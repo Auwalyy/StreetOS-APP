@@ -40,3 +40,10 @@ export const logout = async (req: Request, res: Response) => {
 export const getMe = async (req: Request, res: Response) => {
   sendSuccess(res, req.user, 'User profile');
 };
+
+export const updateFCMToken = async (req: Request, res: Response) => {
+  const { fcmToken } = req.body;
+  if (!fcmToken) { res.status(400).json({ success: false, message: 'fcmToken required' }); return; }
+  await (await import('../models/User')).default.findByIdAndUpdate(req.user!._id, { fcmToken });
+  sendSuccess(res, null, 'FCM token updated');
+};

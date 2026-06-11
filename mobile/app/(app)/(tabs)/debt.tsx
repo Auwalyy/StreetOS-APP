@@ -151,7 +151,8 @@ export default function DebtScreen() {
     queryFn: () => debtService.list({ status: statusFilter }),
   });
 
-  const debts = data?.data?.data?.debts || [];
+  // sendPaginated → { success, data: [], pagination }
+  const debts: any[] = Array.isArray(data?.data?.data) ? data.data.data : [];
 
   return (
     <View style={styles.container}>

@@ -2,7 +2,7 @@ import Transaction from '../models/Transaction';
 import Inventory from '../models/Inventory';
 import Customer from '../models/Customer';
 import { AppError } from '../utils/appError';
-import { callAIService } from './ai.service';
+import { processVoiceAudio } from './ai.service';
 import { detectFraud } from './fraud.service';
 import mongoose from 'mongoose';
 
@@ -54,26 +54,36 @@ export const createVoiceTransaction = async (
   language: string,
   location?: { lat: number; lng: number }
 ) => {
-  const extracted = await callAIService('/voice/process', { audioBuffer, language });
-  if (!extracted || extracted.confidence < 0.5) {
+  const extracted = await processVoiceAudio(audioBuffer, language);
+
+  // Voice endpoint returns { type, data, transcript } — data holds the extracted fields
+  const result = extracted?.type === 'transaction' ? extracted.data : null;
+  if (!result || (result.confidence ?? 1) < 0.5) {
     throw new AppError('Could not understand the voice input. Please try again.', 422);
   }
 
   const txData = {
-    type: extracted.transaction_type,
-    amount: extracted.total_amount,
-    quantity: extracted.quantity,
-    unitPrice: extracted.unit_price,
-    productName: extracted.product_name,
-    customerName: extracted.customer_name,
-    paymentMethod: extracted.payment_method || 'cash',
+    type: result.transaction_type,
+    amount: result.total_amount,
+    quantity: result.quantity,
+    unitPrice: result.unit_price,
+    productName: result.product_name,
+    customerName: result.customer_name,
+    paymentMethod: result.payment_method || 'cash',
     voiceTranscript: extracted.transcript,
     source: 'voice',
     location: location ? { type: 'Point', coordinates: [location.lng, location.lat] } : undefined,
   };
 
   const tx = await createTransaction(userId, txData);
-  return { transaction: tx, confidence: extracted.confidence };
+  return {
+    transaction: {
+      ...tx.toObject(),
+      voiceTranscript: txData.voiceTranscript,
+    },
+    confidence: result.confidence ?? 0.9,
+    inventoryUpdated: !!txData.productName,
+  };
 };
 
 export const syncOfflineTransactions = async (userId: string, transactions: Record<string, unknown>[]) => {
@@ -129,14 +139,31 @@ export const getTransactions = async (
 export const getTransactionSummary = async (userId: string, period: 'daily' | 'weekly' | 'monthly') => {
   const now = new Date();
   let from: Date;
-  if (period === 'daily') from = new Date(now.setHours(0, 0, 0, 0));
-  else if (period === 'weekly') from = new Date(now.setDate(now.getDate() - 7));
-  else from = new Date(now.setMonth(now.getMonth() - 1));
+  if (period === 'daily') {
+    from = new Date(); from.setHours(0, 0, 0, 0);
+  } else if (period === 'weekly') {
+    from = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+  } else {
+    from = new Date(now.getTime()); from.setMonth(from.getMonth() - 1);
+  }
 
-  const summary = await Transaction.aggregate([
+  const groups = await Transaction.aggregate([
     { $match: { userId: new mongoose.Types.ObjectId(userId), createdAt: { $gte: from } } },
-    { $group: { _id: '$type', total: { $sum: '$amount' }, count: { $sum: 1 } } },
+    { $group: { _id: '$type', total: { $sum: '$amount' }, count: { $sum: 1 }, qty: { $sum: '$quantity' } } },
   ]);
 
-  return summary;
+  const revenue = groups.find((g) => g._id === 'sale')?.total || 0;
+  const purchases = groups.find((g) => g._id === 'purchase')?.total || 0;
+  const expenses = groups.find((g) => g._id === 'expense')?.total || 0;
+  const salesCount = groups.find((g) => g._id === 'sale')?.count || 0;
+  const itemsSold = groups.find((g) => g._id === 'sale')?.qty || 0;
+
+  return {
+    totalRevenue: revenue,
+    totalProfit: revenue - purchases - expenses,
+    salesCount,
+    itemsSold,
+    period,
+    breakdown: groups,
+  };
 };

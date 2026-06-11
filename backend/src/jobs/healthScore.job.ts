@@ -5,6 +5,12 @@ import Debt from '../models/Debt';
 import { logger } from '../utils/logger';
 import mongoose from 'mongoose';
 
+export const runHealthScoreForUser = async (userId: string) => {
+  const score = await computeHealthScore(userId);
+  const saved = await HealthScore.create({ userId, ...score, calculatedAt: new Date() });
+  return saved;
+};
+
 export const runHealthScoreJob = async () => {
   const users = await User.find({ isActive: true, role: { $in: ['trader', 'artisan', 'business_owner', 'food_vendor'] } }).select('_id');
 

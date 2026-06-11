@@ -1,0 +1,88 @@
+{
+  "common": {
+    "save": "Ajiye",
+    "cancel": "Soke",
+    "delete": "Share",
+    "edit": "Gyara",
+    "back": "Baya",
+    "loading": "Ana loda...",
+    "error": "Wani abu ya faru",
+    "success": "Nasara",
+    "seeAll": "Duba Duka",
+    "noData": "Babu bayani"
+  },
+  "auth": {
+    "welcome": "Barka da Dawowa",
+    "register": "Ƙirƙiri Asusun",
+    "login": "Shiga",
+    "logout": "Fita",
+    "phone": "Lambar Waya",
+    "password": "Kalmar Sirri",
+    "firstName": "Sunan Farko",
+    "lastName": "Sunan Ƙarshe",
+    "businessName": "Sunan Kasuwanci",
+    "otpSent": "An aika lambar tabbaci",
+    "verify": "Tabbatar"
+  },
+  "dashboard": {
+    "greeting": "Barka da safe",
+    "revenue": "Kudin Shiga",
+    "profit": "Riba",
+    "sales": "Sayarwa",
+    "itemsSold": "Kayan da aka Siyar",
+    "healthScore": "Maki Lafiya",
+    "creditScore": "Maki Bashi",
+    "quickActions": "Ayyuka na Gaggawa",
+    "recentTransactions": "Cinikayya na Kwanan nan"
+  },
+  "voice": {
+    "tapToStart": "Danna don fara",
+    "tapToStop": "Danna don tsayawa",
+    "listening": "Ina sauraro...",
+    "processing": "Ana sarrafa muryar ka...",
+    "instruction": "Danna makirufo ka faɗi cinikayya",
+    "example": "\"Na sayar da jakunkuna 3 na shinkafa naira 45,000\"",
+    "recorded": "An Rubuta Cinikayya!",
+    "savedOffline": "An Ajiye Offline"
+  },
+  "transactions": {
+    "title": "Cinikayya",
+    "add": "Ƙara Cinikayya",
+    "type": "Nau'i",
+    "amount": "Adadi",
+    "product": "Kaya",
+    "customer": "Abokin Ciniki",
+    "date": "Kwanan Wata"
+  },
+  "inventory": {
+    "title": "Kayan Gida",
+    "add": "Ƙara Abu",
+    "lowStock": "Kaɗan ya Rage",
+    "quantity": "Yawa",
+    "costPrice": "Farashin Siye",
+    "sellingPrice": "Farashin Sayarwa"
+  },
+  "debt": {
+    "title": "Littafin Bashi",
+    "add": "Rubuta Bashi",
+    "balance": "Ragowar Bashi",
+    "paid": "An Biya",
+    "due": "Ranar Biyan",
+    "recordPayment": "Rubuta Biyan",
+    "settled": "An Biya",
+    "pending": "Ana Jira",
+    "overdue": "Ya Wuce Ranar"
+  },
+  "scores": {
+    "health": "Maki Lafiyar Kasuwanci",
+    "credit": "Maki Bashi",
+    "strengths": "Ƙarfi",
+    "weaknesses": "Wuraren da za a Inganta",
+    "recommendations": "Shawarwari",
+    "excellent": "Ƙwarai",
+    "good": "Kyau",
+    "fair": "Matsakaici",
+    "needsWork": "Yana Buƙatar Ingantawa",
+    "critical": "Mai Hatsari"
+  }
+}

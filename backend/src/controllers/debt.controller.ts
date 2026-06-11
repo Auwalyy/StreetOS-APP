@@ -4,6 +4,12 @@ import { sendSuccess, sendPaginated } from '../utils/response';
 import { getPagination } from '../utils/pagination';
 import Debt from '../models/Debt';
 
+export const getDebtById = async (req: Request, res: Response) => {
+  const debt = await Debt.findOne({ _id: req.params.id, userId: req.user!._id });
+  if (!debt) { res.status(404).json({ success: false, message: 'Debt not found' }); return; }
+  sendSuccess(res, debt, 'Debt details');
+};
+
 export const listDebts = async (req: Request, res: Response) => {
   const { page, limit } = getPagination(req);
   const query: Record<string, unknown> = { userId: req.user!._id };
