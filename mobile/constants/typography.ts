@@ -1,0 +1,36 @@
+export const Typography = {
+  fontFamily: {
+    display: 'PlusJakartaSans',
+    body:    'Inter',
+    mono:    'JetBrainsMono',
+  },
+  fontSize: {
+    xs:   10,
+    sm:   12,
+    base: 14,
+    md:   16,
+    lg:   18,
+    xl:   20,
+    '2xl': 24,
+    '3xl': 30,
+    '4xl': 36,
+  },
+  lineHeight: {
+    xs:   14,
+    sm:   16,
+    base: 20,
+    md:   24,
+    lg:   28,
+    xl:   28,
+    '2xl': 32,
+    '3xl': 36,
+    '4xl': 40,
+  },
+  fontWeight: {
+    regular:   '400' as const,
+    medium:    '500' as const,
+    semibold:  '600' as const,
+    bold:      '700' as const,
+    extrabold: '800' as const,
+  },
+} as const;
