@@ -63,7 +63,7 @@ app.use(errorHandler);
 
 const start = async () => {
   await connectDatabase();
-  await connectRedis();
+ // await connectRedis();
   initJobs();
   app.listen(config.port, () => {
     logger.info(`StreetOS API running on port ${config.port} [${config.env}]`);
