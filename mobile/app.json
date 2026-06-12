@@ -4,14 +4,9 @@
     "slug": "streetos-ai",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
-    "scheme": "streetos",
+     "scheme": "streetos",
     "userInterfaceStyle": "automatic",
-    "splash": {
-      "image": "./assets/images/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#1B4332"
-    },
+     
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -25,8 +20,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#1B4332"
+         "backgroundColor": "#1B4332"
       },
       "package": "ai.streetos.app",
       "permissions": [
@@ -45,13 +39,7 @@
           "microphonePermission": "Allow StreetOS to access your microphone."
         }
       ],
-      [
-        "expo-notifications",
-        {
-          "icon": "./assets/images/notification-icon.png",
-          "color": "#1B4332"
-        }
-      ],
+      
       "expo-sqlite",
       "expo-status-bar"
     ],
