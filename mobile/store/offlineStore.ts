@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { v4 as uuidv4 } from 'uuid';
 
 export interface OfflineTransaction {
   localId: string;
@@ -40,7 +39,7 @@ export const useOfflineStore = create<OfflineState>()(
         set((state) => ({
           pendingTransactions: [
             ...state.pendingTransactions,
-            { ...data, localId: uuidv4(), synced: false, createdAt: new Date().toISOString() },
+            { ...data, localId: `local_${Date.now()}_${Math.random().toString(36).slice(2)}`, synced: false, createdAt: new Date().toISOString() },
           ],
         })),
 
