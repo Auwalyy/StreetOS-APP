@@ -19,7 +19,7 @@ const getContext = async (userId: string) => {
       { $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } } },
     ]),
     Inventory.find({ userId: uid, $expr: { $lte: ['$quantity', '$lowStockThreshold'] } }).select('name quantity').limit(5).lean(),
-    Debt.find({ userId: uid, status: { $in: ['pending', 'partial'] }, dueDate: { $lt: new Date() } }).select('debtorName remainingAmount').limit(5).lean(),
+    Debt.find({ userId: uid, status: { $in: ['pending', 'partial'] }, dueDate: { $lt: new Date() } }).select('customerName balance').limit(5).lean(),
     HealthScore.findOne({ userId: uid }).sort({ calculatedAt: -1 }).lean(),
     CreditScore.findOne({ userId: uid }).sort({ calculatedAt: -1 }).lean(),
   ]);
@@ -34,7 +34,7 @@ const getContext = async (userId: string) => {
     todaySales: revResult[0]?.count || 0,
     monthlyRevenue: monthlyRev[0]?.total || 0,
     lowStock,
-    overdueDebts,
+    overdueDebts: overdueDebts as { customerName: string; balance: number }[],
     healthScore: health?.score || 0,
     creditScore: credit?.score || 0,
   };
@@ -63,7 +63,7 @@ const generateInsight = (message: string, ctx: Awaited<ReturnType<typeof getCont
 
   if (msg.includes('debt') || msg.includes('owe') || msg.includes('credit') || msg.includes('loan')) {
     if (ctx.overdueDebts.length > 0) {
-      const names = ctx.overdueDebts.map((d: any) => d.debtorName).join(', ');
+      const names = ctx.overdueDebts.map((d) => d.customerName).join(', ');
       return `You have ${ctx.overdueDebts.length} overdue debt(s) from: ${names}. Follow up immediately — recovering these improves your cash flow and credit score. Your current credit score is ${ctx.creditScore}/850.`;
     }
     return `Your debt book is clean — no overdue records. Your credit score is ${ctx.creditScore}/850. ${
@@ -84,7 +84,7 @@ const generateInsight = (message: string, ctx: Awaited<ReturnType<typeof getCont
   if (msg.includes('tip') || msg.includes('advice') || msg.includes('improve') || msg.includes('grow') || msg.includes('increase')) {
     const tips = [];
     if (ctx.lowStock.length > 0) tips.push(`Restock ${ctx.lowStock[0].name} to avoid lost sales`);
-    if (ctx.overdueDebts.length > 0) tips.push(`Collect overdue payment from ${ctx.overdueDebts[0].debtorName}`);
+    if (ctx.overdueDebts.length > 0) tips.push(`Collect overdue payment from ${ctx.overdueDebts[0].customerName}`);
     if (ctx.healthScore < 75) tips.push('Record at least 1 transaction daily to boost your health score');
     if (ctx.creditScore < 670) tips.push('Settle debts on time to build your credit score above 670');
     if (tips.length === 0) tips.push('Keep up the great work — share your Business Passport with potential partners');
