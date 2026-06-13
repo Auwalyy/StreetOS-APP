@@ -28,6 +28,7 @@ export interface IUser extends Document {
     }[];
     fcmToken?: string;
     whatsappNumber?: string;
+    refreshTokens: string[];
     businessRegisteredAt?: Date;
     lastLoginAt?: Date;
     createdAt?: Date;

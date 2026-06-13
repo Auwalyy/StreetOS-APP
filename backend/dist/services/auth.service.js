@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.logoutUser = exports.refreshTokens = exports.verifyUserOTP = exports.loginUser = exports.registerUser = void 0;
 const User_1 = __importDefault(require("../models/User"));
-const redis_1 = __importDefault(require("../config/redis"));
 const jwt_1 = require("../utils/jwt");
 const otp_1 = require("../utils/otp");
 const notification_service_1 = require("./notification.service");
@@ -32,8 +31,10 @@ const loginUser = async (phone, password) => {
         throw new appError_1.AppError('Account suspended', 403);
     const accessToken = (0, jwt_1.generateAccessToken)(String(user._id), user.role);
     const refreshToken = (0, jwt_1.generateRefreshToken)(String(user._id));
-    await redis_1.default.set(`refresh:${(0, otp_1.hashToken)(refreshToken)}`, String(user._id), { EX: 30 * 24 * 60 * 60 });
-    await User_1.default.findByIdAndUpdate(user._id, { lastLoginAt: new Date() });
+    await User_1.default.findByIdAndUpdate(user._id, {
+        lastLoginAt: new Date(),
+        $push: { refreshTokens: (0, otp_1.hashToken)(refreshToken) },
+    });
     return {
         accessToken,
         refreshToken,
@@ -50,28 +51,27 @@ const verifyUserOTP = async (phone, otp) => {
         throw new appError_1.AppError('User not found', 404);
     const accessToken = (0, jwt_1.generateAccessToken)(String(user._id), user.role);
     const refreshToken = (0, jwt_1.generateRefreshToken)(String(user._id));
-    await redis_1.default.set(`refresh:${(0, otp_1.hashToken)(refreshToken)}`, String(user._id), { EX: 30 * 24 * 60 * 60 });
+    await User_1.default.findByIdAndUpdate(user._id, { $push: { refreshTokens: (0, otp_1.hashToken)(refreshToken) } });
     return { accessToken, refreshToken, user: { id: user._id, firstName: user.firstName, role: user.role } };
 };
 exports.verifyUserOTP = verifyUserOTP;
 const refreshTokens = async (token) => {
     const payload = (0, jwt_1.verifyRefreshToken)(token);
-    const key = `refresh:${(0, otp_1.hashToken)(token)}`;
-    const userId = await redis_1.default.get(key);
-    if (!userId || userId !== payload.sub)
-        throw new appError_1.AppError('Invalid refresh token', 401);
-    await redis_1.default.del(key);
-    const user = await User_1.default.findById(payload.sub);
+    const hashed = (0, otp_1.hashToken)(token);
+    const user = await User_1.default.findOne({ _id: payload.sub, refreshTokens: hashed }).select('+refreshTokens');
     if (!user || !user.isActive)
-        throw new appError_1.AppError('User not found', 401);
+        throw new appError_1.AppError('Invalid refresh token', 401);
     const newAccessToken = (0, jwt_1.generateAccessToken)(String(user._id), user.role);
     const newRefreshToken = (0, jwt_1.generateRefreshToken)(String(user._id));
-    await redis_1.default.set(`refresh:${(0, otp_1.hashToken)(newRefreshToken)}`, String(user._id), { EX: 30 * 24 * 60 * 60 });
+    await User_1.default.findByIdAndUpdate(user._id, {
+        $pull: { refreshTokens: hashed },
+        $push: { refreshTokens: (0, otp_1.hashToken)(newRefreshToken) },
+    });
     return { accessToken: newAccessToken, refreshToken: newRefreshToken };
 };
 exports.refreshTokens = refreshTokens;
 const logoutUser = async (refreshToken) => {
-    await redis_1.default.del(`refresh:${(0, otp_1.hashToken)(refreshToken)}`);
+    await User_1.default.findOneAndUpdate({ refreshTokens: (0, otp_1.hashToken)(refreshToken) }, { $pull: { refreshTokens: (0, otp_1.hashToken)(refreshToken) } });
 };
 exports.logoutUser = logoutUser;
 //# sourceMappingURL=auth.service.js.map

@@ -30,6 +30,8 @@ const advisor_routes_1 = __importDefault(require("./routes/advisor.routes"));
 // Jobs
 const jobs_1 = require("./jobs");
 const app = (0, express_1.default)();
+// Trust proxy (required for Render, Railway, etc.)
+app.set('trust proxy', 1);
 // Security
 app.use((0, helmet_1.default)());
 app.use((0, cors_1.default)({ origin: process.env.ALLOWED_ORIGINS?.split(',') || '*', credentials: true }));
@@ -59,7 +61,6 @@ app.use(`${prefix}/advisor`, advisor_routes_1.default);
 app.use(errorHandler_1.errorHandler);
 const start = async () => {
     await (0, database_1.connectDatabase)();
-    // await connectRedis();
     (0, jobs_1.initJobs)();
     app.listen(env_1.config.port, () => {
         logger_1.logger.info(`StreetOS API running on port ${env_1.config.port} [${env_1.config.env}]`);

@@ -5,22 +5,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.hashToken = exports.verifyOTP = exports.storeOTP = exports.generateOTP = void 0;
 const crypto_1 = __importDefault(require("crypto"));
-const redis_1 = __importDefault(require("../config/redis"));
 const generateOTP = () => {
     return Math.floor(100000 + Math.random() * 900000).toString();
 };
 exports.generateOTP = generateOTP;
+// In-memory OTP store: phone -> { otp, expiresAt }
+const otpStore = new Map();
 const storeOTP = async (phone, otp) => {
-    const key = `otp:${phone}`;
-    await redis_1.default.set(key, otp, { EX: 300 }); // 5 minutes TTL
+    otpStore.set(phone, { otp, expiresAt: Date.now() + 5 * 60 * 1000 });
 };
 exports.storeOTP = storeOTP;
 const verifyOTP = async (phone, otp) => {
-    const key = `otp:${phone}`;
-    const stored = await redis_1.default.get(key);
-    if (!stored || stored !== otp)
+    const entry = otpStore.get(phone);
+    if (!entry || entry.otp !== otp || Date.now() > entry.expiresAt)
         return false;
-    await redis_1.default.del(key);
+    otpStore.delete(phone);
     return true;
 };
 exports.verifyOTP = verifyOTP;

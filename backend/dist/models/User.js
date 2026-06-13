@@ -71,6 +71,7 @@ const UserSchema = new mongoose_1.Schema({
     kycDocuments: [{ type: { type: String }, url: String, verifiedAt: Date }],
     fcmToken: String,
     whatsappNumber: String,
+    refreshTokens: { type: [String], select: false, default: [] },
     businessRegisteredAt: Date,
     lastLoginAt: Date,
 }, { timestamps: true });
