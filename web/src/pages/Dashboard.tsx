@@ -33,6 +33,7 @@ function ScoreCircle({ score, max, label, color }: { score: number; max: number;
 
 const QUICK_ACTIONS = [
   { emoji: '🤖', label: 'AI Advisor', to: '/advisor' },
+  { emoji: '🪪', label: 'My Passport', to: '/passport' },
   { emoji: '📒', label: 'Debt Book', to: '/debts' },
   { emoji: '📦', label: 'Inventory', to: '/inventory' },
   { emoji: '📊', label: 'Analytics', to: '/analytics' },

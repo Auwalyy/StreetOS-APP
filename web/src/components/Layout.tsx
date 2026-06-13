@@ -8,6 +8,7 @@ const NAV = [
   { to: '/debts',       icon: '📒', label: 'Debt Book'    },
   { to: '/analytics',   icon: '📊', label: 'Analytics'    },
   { to: '/advisor',     icon: '🤖', label: 'AI Advisor'   },
+  { to: '/passport',    icon: '🪪', label: 'My Passport'  },
 ];
 
 export default function Layout() {

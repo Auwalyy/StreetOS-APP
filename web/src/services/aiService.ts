@@ -10,9 +10,9 @@ export const aiService = {
   extractDebt: (text: string, language = 'en') =>
     aiApi.post('/nlp/extract-debt', { text, language }),
   advisorChat: (message: string, userId?: string, language = 'en') =>
-    aiApi.post('/advisor/chat', { message, user_id: userId, language }),
+    aiApi.post('/advisor/chat', { message, userId: userId ?? '', language }),
   getDailyBriefing: (userId: string, language = 'en') =>
-    aiApi.post('/advisor/daily-briefing', { user_id: userId, language }),
+    aiApi.post('/advisor/briefing', { userId, language }),
   getMarketIntelligence: (region?: string, category?: string) =>
     aiApi.get('/market/intelligence', { params: { region, category } }),
   getCreditScore: (userId: string) =>

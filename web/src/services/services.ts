@@ -63,3 +63,9 @@ export const customerService = {
   list: (params?: Record<string, unknown>) => api.get('/customers', { params }),
   getById: (id: string) => api.get(`/customers/${id}`),
 };
+
+export const passportService = {
+  get: () => api.get('/passport'),
+  generatePDF: () => api.post('/passport/generate-pdf'),
+  share: () => api.post('/passport/share'),
+};
