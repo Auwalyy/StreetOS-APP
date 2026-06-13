@@ -7,17 +7,13 @@ exports.logoutUser = exports.refreshTokens = exports.verifyUserOTP = exports.log
 const User_1 = __importDefault(require("../models/User"));
 const jwt_1 = require("../utils/jwt");
 const otp_1 = require("../utils/otp");
-const notification_service_1 = require("./notification.service");
 const appError_1 = require("../utils/appError");
 const registerUser = async (data) => {
     const exists = await User_1.default.findOne({ phone: data.phone });
     if (exists)
         throw new appError_1.AppError('Phone number already registered', 409);
-    const user = await User_1.default.create({ ...data, passwordHash: data.password });
-    const otp = (0, otp_1.generateOTP)();
-    await (0, otp_1.storeOTP)(data.phone, otp);
-    await (0, notification_service_1.sendSMS)(data.phone, `Your StreetOS verification code is: ${otp}. Expires in 5 minutes.`);
-    return { userId: user._id, otpExpiry: new Date(Date.now() + 5 * 60 * 1000) };
+    const user = await User_1.default.create({ ...data, passwordHash: data.password, isVerified: true });
+    return { userId: user._id };
 };
 exports.registerUser = registerUser;
 const loginUser = async (phone, password) => {
@@ -25,8 +21,6 @@ const loginUser = async (phone, password) => {
     if (!user || !(await user.comparePassword(password))) {
         throw new appError_1.AppError('Invalid phone or password', 401);
     }
-    if (!user.isVerified)
-        throw new appError_1.AppError('Please verify your phone number', 403);
     if (!user.isActive)
         throw new appError_1.AppError('Account suspended', 403);
     const accessToken = (0, jwt_1.generateAccessToken)(String(user._id), user.role);

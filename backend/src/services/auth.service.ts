@@ -16,12 +16,9 @@ export const registerUser = async (data: {
   const exists = await User.findOne({ phone: data.phone });
   if (exists) throw new AppError('Phone number already registered', 409);
 
-  const user = await User.create({ ...data, passwordHash: data.password });
-  const otp = generateOTP();
-  await storeOTP(data.phone, otp);
-  await sendSMS(data.phone, `Your StreetOS verification code is: ${otp}. Expires in 5 minutes.`);
+  const user = await User.create({ ...data, passwordHash: data.password, isVerified: true });
 
-  return { userId: user._id, otpExpiry: new Date(Date.now() + 5 * 60 * 1000) };
+  return { userId: user._id };
 };
 
 export const loginUser = async (phone: string, password: string) => {
@@ -29,7 +26,6 @@ export const loginUser = async (phone: string, password: string) => {
   if (!user || !(await user.comparePassword(password))) {
     throw new AppError('Invalid phone or password', 401);
   }
-  if (!user.isVerified) throw new AppError('Please verify your phone number', 403);
   if (!user.isActive) throw new AppError('Account suspended', 403);
 
   const accessToken = generateAccessToken(String(user._id), user.role);

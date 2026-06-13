@@ -8,7 +8,6 @@ export declare const registerUser: (data: {
     language?: string;
 }) => Promise<{
     userId: import("mongoose").Types.ObjectId;
-    otpExpiry: Date;
 }>;
 export declare const loginUser: (phone: string, password: string) => Promise<{
     accessToken: string;
