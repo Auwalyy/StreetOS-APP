@@ -2,7 +2,8 @@ import { Request, Response } from 'express';
 import { sendSuccess } from '../utils/response';
 import HealthScore from '../models/HealthScore';
 import CreditScore from '../models/CreditScore';
-import { runHealthScoreForUser, runCreditScoreForUser } from '../jobs/healthScore.job';
+import { runHealthScoreForUser } from '../jobs/healthScore.job';
+import { runCreditScoreForUser } from '../jobs/creditScore.job';
 
 export const getHealthScore = async (req: Request, res: Response) => {
   const score = await HealthScore.findOne({ userId: req.user!._id }).sort({ calculatedAt: -1 });

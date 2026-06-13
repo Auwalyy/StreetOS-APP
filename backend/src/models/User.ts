@@ -25,6 +25,7 @@ export interface IUser extends Document {
   whatsappNumber?: string;
   businessRegisteredAt?: Date;
   lastLoginAt?: Date;
+  createdAt?: Date;
   comparePassword(password: string): Promise<boolean>;
 }
 

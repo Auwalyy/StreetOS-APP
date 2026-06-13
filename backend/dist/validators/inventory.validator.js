@@ -1,0 +1,32 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.updateInventorySchema = exports.createInventorySchema = void 0;
+const joi_1 = __importDefault(require("joi"));
+exports.createInventorySchema = joi_1.default.object({
+    name: joi_1.default.string().min(1).required(),
+    category: joi_1.default.string().optional(),
+    sku: joi_1.default.string().optional(),
+    quantity: joi_1.default.number().min(0).required(),
+    unit: joi_1.default.string().default('pieces'),
+    costPrice: joi_1.default.number().min(0).default(0),
+    sellingPrice: joi_1.default.number().min(0).default(0),
+    lowStockThreshold: joi_1.default.number().min(0).default(5),
+    supplier: joi_1.default.string().optional(),
+    reorderPoint: joi_1.default.number().optional(),
+    images: joi_1.default.array().items(joi_1.default.string()).optional(),
+});
+exports.updateInventorySchema = joi_1.default.object({
+    name: joi_1.default.string().optional(),
+    category: joi_1.default.string().optional(),
+    quantity: joi_1.default.number().min(0).optional(),
+    unit: joi_1.default.string().optional(),
+    costPrice: joi_1.default.number().min(0).optional(),
+    sellingPrice: joi_1.default.number().min(0).optional(),
+    lowStockThreshold: joi_1.default.number().min(0).optional(),
+    supplier: joi_1.default.string().optional(),
+    isActive: joi_1.default.boolean().optional(),
+});
+//# sourceMappingURL=inventory.validator.js.map
