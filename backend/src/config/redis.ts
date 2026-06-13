@@ -15,7 +15,7 @@ redisClient.on('connect', () => {
 });
 
 export const connectRedis = async (): Promise<void> => {
-  if (process.env.REDIS_ENABLED !== 'true') {
+  if (!config.redis.url || process.env.REDIS_ENABLED === 'false') {
     logger.warn('Redis is disabled');
     return;
   }

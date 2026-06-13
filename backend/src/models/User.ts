@@ -23,6 +23,7 @@ export interface IUser extends Document {
   kycDocuments: { type: string; url: string; verifiedAt?: Date }[];
   fcmToken?: string;
   whatsappNumber?: string;
+  refreshTokens: string[];
   businessRegisteredAt?: Date;
   lastLoginAt?: Date;
   createdAt?: Date;
@@ -63,6 +64,7 @@ const UserSchema = new Schema<IUser>(
     kycDocuments: [{ type: { type: String }, url: String, verifiedAt: Date }],
     fcmToken: String,
     whatsappNumber: String,
+    refreshTokens: { type: [String], select: false, default: [] },
     businessRegisteredAt: Date,
     lastLoginAt: Date,
   },

@@ -1,5 +1,4 @@
 import User from '../models/User';
-import redisClient from '../config/redis';
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../utils/jwt';
 import { generateOTP, storeOTP, verifyOTP, hashToken } from '../utils/otp';
 import { sendSMS } from './notification.service';
@@ -36,9 +35,10 @@ export const loginUser = async (phone: string, password: string) => {
   const accessToken = generateAccessToken(String(user._id), user.role);
   const refreshToken = generateRefreshToken(String(user._id));
 
-  await redisClient.set(`refresh:${hashToken(refreshToken)}`, String(user._id), { EX: 30 * 24 * 60 * 60 });
-
-  await User.findByIdAndUpdate(user._id, { lastLoginAt: new Date() });
+  await User.findByIdAndUpdate(user._id, {
+    lastLoginAt: new Date(),
+    $push: { refreshTokens: hashToken(refreshToken) },
+  });
 
   return {
     accessToken,
@@ -56,29 +56,32 @@ export const verifyUserOTP = async (phone: string, otp: string) => {
 
   const accessToken = generateAccessToken(String(user._id), user.role);
   const refreshToken = generateRefreshToken(String(user._id));
-  await redisClient.set(`refresh:${hashToken(refreshToken)}`, String(user._id), { EX: 30 * 24 * 60 * 60 });
+  await User.findByIdAndUpdate(user._id, { $push: { refreshTokens: hashToken(refreshToken) } });
 
   return { accessToken, refreshToken, user: { id: user._id, firstName: user.firstName, role: user.role } };
 };
 
 export const refreshTokens = async (token: string) => {
   const payload = verifyRefreshToken(token);
-  const key = `refresh:${hashToken(token)}`;
-  const userId = await redisClient.get(key);
-  if (!userId || userId !== payload.sub) throw new AppError('Invalid refresh token', 401);
+  const hashed = hashToken(token);
 
-  await redisClient.del(key);
-
-  const user = await User.findById(payload.sub);
-  if (!user || !user.isActive) throw new AppError('User not found', 401);
+  const user = await User.findOne({ _id: payload.sub, refreshTokens: hashed }).select('+refreshTokens');
+  if (!user || !user.isActive) throw new AppError('Invalid refresh token', 401);
 
   const newAccessToken = generateAccessToken(String(user._id), user.role);
   const newRefreshToken = generateRefreshToken(String(user._id));
-  await redisClient.set(`refresh:${hashToken(newRefreshToken)}`, String(user._id), { EX: 30 * 24 * 60 * 60 });
+
+  await User.findByIdAndUpdate(user._id, {
+    $pull: { refreshTokens: hashed },
+    $push: { refreshTokens: hashToken(newRefreshToken) },
+  });
 
   return { accessToken: newAccessToken, refreshToken: newRefreshToken };
 };
 
 export const logoutUser = async (refreshToken: string) => {
-  await redisClient.del(`refresh:${hashToken(refreshToken)}`);
+  await User.findOneAndUpdate(
+    { refreshTokens: hashToken(refreshToken) },
+    { $pull: { refreshTokens: hashToken(refreshToken) } }
+  );
 };

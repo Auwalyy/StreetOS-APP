@@ -1,20 +1,20 @@
 import crypto from 'crypto';
-import redisClient from '../config/redis';
 
 export const generateOTP = (): string => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
 
+// In-memory OTP store: phone -> { otp, expiresAt }
+const otpStore = new Map<string, { otp: string; expiresAt: number }>();
+
 export const storeOTP = async (phone: string, otp: string): Promise<void> => {
-  const key = `otp:${phone}`;
-  await redisClient.set(key, otp, { EX: 300 }); // 5 minutes TTL
+  otpStore.set(phone, { otp, expiresAt: Date.now() + 5 * 60 * 1000 });
 };
 
 export const verifyOTP = async (phone: string, otp: string): Promise<boolean> => {
-  const key = `otp:${phone}`;
-  const stored = await redisClient.get(key);
-  if (!stored || stored !== otp) return false;
-  await redisClient.del(key);
+  const entry = otpStore.get(phone);
+  if (!entry || entry.otp !== otp || Date.now() > entry.expiresAt) return false;
+  otpStore.delete(phone);
   return true;
 };
 

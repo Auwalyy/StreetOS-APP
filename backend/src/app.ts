@@ -6,7 +6,6 @@ import compression from 'compression';
 import morgan from 'morgan';
 import { config } from './config/env';
 import { connectDatabase } from './config/database';
-import { connectRedis } from './config/redis';
 import { errorHandler } from './middleware/errorHandler';
 import { rateLimiter } from './middleware/rateLimiter';
 import { logger } from './utils/logger';
@@ -29,6 +28,9 @@ import advisorRoutes from './routes/advisor.routes';
 import { initJobs } from './jobs';
 
 const app = express();
+
+// Trust proxy (required for Render, Railway, etc.)
+app.set('trust proxy', 1);
 
 // Security
 app.use(helmet());
@@ -63,7 +65,6 @@ app.use(errorHandler);
 
 const start = async () => {
   await connectDatabase();
- // await connectRedis();
   initJobs();
   app.listen(config.port, () => {
     logger.info(`StreetOS API running on port ${config.port} [${config.env}]`);
